@@ -1,6 +1,7 @@
 # type: ignore
 import json
 import logging
+import types
 from functools import wraps
 from typing import Annotated, Any, Optional, TypeVar, cast, get_origin, Literal, Union
 from enum import Enum
@@ -471,6 +472,9 @@ def openai_schema_helper(cls: T) -> T:
 
     if origin is Union:
         return Union[tuple(openai_schema_helper(arg) for arg in cls.__args__)]
+    
+    if isinstance(cls, types.UnionType):
+        return cls
 
     if issubclass(cls, (str, int, bool, float, bytes, Enum)):
         return cls
